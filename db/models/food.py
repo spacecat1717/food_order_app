@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy import String, Column, Table, ForeignKey
+from sqlalchemy import String, Column, Table, ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db.models.base import Base
 
@@ -20,6 +20,7 @@ class Dish(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     ingredients: Mapped[Optional[List["Ingredient"]]] = relationship(secondary=relation_table, back_populates='dishes')
+    price: Mapped[int] = mapped_column(Numeric, default=300)
 
 
 class Ingredient(Base):
