@@ -15,6 +15,7 @@ class Order(Base):
     closed: Mapped[Any] = mapped_column(DateTime(timezone=True))
     status: Mapped[str] = mapped_column(String(16))
     items: Mapped[Optional[List["OrderItem"]]] = relationship()
+    total: Mapped[Numeric] = mapped_column(default=0.0)
 
 
 class OrderItem(Base):
