@@ -2,10 +2,12 @@ from typing import List, Optional, Any
 
 from sqlalchemy import String, ForeignKey, Integer, DateTime, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from db.mixins.crud_mixin import CRUDMixin
 from db.models.base import Base
 
 
-class Order(Base):
+class Order(Base, CRUDMixin):
     __tablename__ = 'orders'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -18,7 +20,7 @@ class Order(Base):
     total: Mapped[Numeric] = mapped_column(default=0.0)
 
 
-class OrderItem(Base):
+class OrderItem(Base, CRUDMixin):
     __tablename__ = 'order_items'
 
     id: Mapped[int] = mapped_column(primary_key=True)

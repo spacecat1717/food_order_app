@@ -1,5 +1,3 @@
-from typing import AsyncGenerator
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import async_session, engine
@@ -13,8 +11,8 @@ async def create_tables():
         await conn.run_sync(Base.metadata.create_all)
 
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_async_session() -> AsyncSession:
     async with async_session() as session:
-        yield session
+        return session
 
 
