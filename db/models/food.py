@@ -1,13 +1,10 @@
 from typing import List, Optional
 
-from sqlalchemy import select
 from sqlalchemy import String, Column, Table, ForeignKey, Numeric
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.models.base import Base
 from db.mixins.crud_mixin import CRUDMixin
-from db.utils.utils import get_async_session
 
 
 # TODO: надо нормальное имя для нее придумать

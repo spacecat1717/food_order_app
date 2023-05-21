@@ -8,6 +8,7 @@ from schemas.food import Dish
 
 
 class OrderItem(BaseModel):
+    id: int = Field(...)
     dish: Dish = Field(...)
     quantity: int = Field(default=0)
     total: Decimal = Field(default=0.0)
@@ -16,6 +17,7 @@ class OrderItem(BaseModel):
         schema_extra = {
             'example': {
                 'dish': {
+                    'id': 1,
                     'name': 'burger',
                     'ingredients': [
                         {
@@ -36,6 +38,7 @@ class OrderItem(BaseModel):
 
 
 class Order(BaseModel):
+    id: int = Field(...)
     name: str = Field(...)
     comment: str = Field(max_length=256)
     created: datetime = Field(...)
@@ -47,6 +50,7 @@ class Order(BaseModel):
     class Config:
         schema_extra = {
             'example': {
+                'id': 1,
                 'name': 'John',
                 'comment': 'More sause please',
                 # TODO: проверить, что datetime будет нормально работать

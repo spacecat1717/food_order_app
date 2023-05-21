@@ -56,7 +56,16 @@ class CRUDMixin(object):
         :param session: DB async session instance
         :return: None
         """
-        session.delete(self)
+        await session.delete(self)
         await session.commit()
 
+    @classmethod
+    async def get_all(cls, session: AsyncSession):
+        """
 
+        :param session:  DB async session instance
+        :return: queryset (all models)
+        """
+        query = select(cls)
+        result = await session.execute(query)
+        return result.unique().scalars().all()

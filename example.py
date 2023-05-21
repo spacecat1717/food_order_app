@@ -26,5 +26,11 @@ async def get_sandwich():
         print('RES:', sandwich.ingredients[0].name)
 
 
+async def get_all_dishes():
+    async with await get_async_session() as session:
+        dishes = await Dish.get_all(session=session)
+        print(dishes[1].ingredients[2].name)
+
+
 if __name__ == '__main__':
-    asyncio.run(get_sandwich())
+    asyncio.run(get_all_dishes())
