@@ -23,9 +23,8 @@ async def main():
 async def get_sandwich():
     async with await get_async_session() as session:
         sandwich = await Dish.get_by_name(session=session, name='ham sandwich')
-        print(sandwich.price)
+        print('RES:', sandwich.ingredients[0].name)
 
 
 if __name__ == '__main__':
     asyncio.run(get_sandwich())
-

@@ -16,7 +16,7 @@ class Order(Base, CRUDMixin):
     created: Mapped[Any] = mapped_column(DateTime(timezone=True))
     closed: Mapped[Any] = mapped_column(DateTime(timezone=True))
     status: Mapped[str] = mapped_column(String(16))
-    items: Mapped[Optional[List["OrderItem"]]] = relationship()
+    items: Mapped[Optional[List["OrderItem"]]] = relationship(lazy='joined')
     total: Mapped[Numeric] = mapped_column(default=0.0)
 
 
