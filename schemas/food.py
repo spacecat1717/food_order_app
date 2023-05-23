@@ -9,6 +9,7 @@ class Ingredient(BaseModel):
     name: str = Field(...)
 
     class Config:
+        orm_mode = True
         schema_extra = {
             'example': {
                 'id': 1,
@@ -24,6 +25,7 @@ class Dish(BaseModel):
     price: Decimal = Field(default=0.0)
 
     class Config:
+        orm_mode = True
         schema_extra = {
             'example': {
                 'id': 1,
@@ -41,3 +43,4 @@ class Dish(BaseModel):
                 ]
             }
         }
+
