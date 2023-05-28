@@ -20,6 +20,18 @@ async def main():
         print(await Dish.get_by_name(session=session, name='ham sandwich'))
 
 
+async def create_roll():
+    async with await get_async_session() as session:
+        lettuce = await Ingredient.get_by_id(session, 1)
+        tomato = await Ingredient.get_by_id(session, 2)
+        sauce = await Ingredient.get_by_id(session, 7)
+        roll = await Dish.create(session=session,
+                                 name='roll',
+                                 ingredients=[lettuce, tomato, sauce],
+                                 price=Decimal(320.20))
+        print(roll.ingredients)
+
+
 async def get_sandwich():
     async with await get_async_session() as session:
         sandwich = await Dish.get_by_name(session=session, name='ham sandwich')
@@ -33,4 +45,4 @@ async def get_all_dishes():
 
 
 if __name__ == '__main__':
-    asyncio.run(get_all_dishes())
+    asyncio.run(create_roll())
