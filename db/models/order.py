@@ -11,6 +11,7 @@ class Order(Base, CRUDMixin):
     __tablename__ = 'orders'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    # TODO: replace to user after write auth system
     name: Mapped[str] = mapped_column(String(50))
     comment: Mapped[str] = mapped_column(String(256))
     created: Mapped[Any] = mapped_column(DateTime(timezone=True))

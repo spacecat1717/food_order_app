@@ -1,16 +1,16 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas import food
 from db.models.food import Ingredient
 from db.utils.utils import get_async_session
 
 
-ing_router = APIRouter(prefix='/ingredients', tags=['ingredient', 'ingredients'])
+ing_router = APIRouter(prefix='/ingredients')
 
 
-@ing_router.get('/', response_model=List[food.Ingredient])
+@ing_router.get('/', response_model=List[food.Ingredient], tags=['ingredients'])
 async def get_all_ingredients(session: AsyncSession = Depends(get_async_session)):
     """
     :param session: AsyncSession for db
@@ -19,7 +19,7 @@ async def get_all_ingredients(session: AsyncSession = Depends(get_async_session)
     return await Ingredient.get_all(session)
 
 
-@ing_router.get('/{ing_id}', response_model=food.Ingredient)
+@ing_router.get('/{ing_id}', response_model=food.Ingredient, tags=['ingredient'])
 async def get_ingredient(ing_id: int, session: AsyncSession = Depends(get_async_session)):
     """
     :param ing_id: id of required ingredient
@@ -29,7 +29,7 @@ async def get_ingredient(ing_id: int, session: AsyncSession = Depends(get_async_
     return await Ingredient.get_by_id(session, ing_id)
 
 
-@ing_router.post('/', response_model=food.Ingredient)
+@ing_router.post('/', response_model=food.Ingredient, tags=['ingredient'])
 async def create_ingredient(request: food.IngredientCreate, session: AsyncSession = Depends(get_async_session)):
     """
     :param request: ingredient schema
@@ -39,7 +39,7 @@ async def create_ingredient(request: food.IngredientCreate, session: AsyncSessio
     return await Ingredient.create(session, name=request.name)
 
 
-@ing_router.delete('/{ing_id}')
+@ing_router.delete('/{ing_id}', tags=['ingredient'])
 async def delete_ingredient(ing_id: int, session: AsyncSession = Depends(get_async_session)):
     """
     :param ing_id: id of an ingredient delete to

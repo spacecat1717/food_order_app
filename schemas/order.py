@@ -41,7 +41,7 @@ class Order(BaseModel):
     id: int = Field(...)
     name: str = Field(...)
     comment: str = Field(max_length=256)
-    created: datetime = Field(...)
+    created: datetime = Field(default_factory=datetime.now())
     closed: datetime = Field(default=None)
     status: str = Field(...)
     items: Optional[List[OrderItem]]
@@ -52,7 +52,7 @@ class Order(BaseModel):
             'example': {
                 'id': 1,
                 'name': 'John',
-                'comment': 'More sause please',
+                'comment': 'More sauce please',
                 # TODO: проверить, что datetime будет нормально работать
                 'created': '2023-05-10 22:53:47.503971',
                 'closed':  None,

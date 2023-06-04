@@ -8,10 +8,10 @@ from schemas import food
 from db.models.food import Dish, Ingredient
 from db.utils.utils import get_async_session
 
-dishes_router = APIRouter(prefix="/dishes", tags=['dish', 'dishes'])
+dishes_router = APIRouter(prefix="/dishes")
 
 
-@dishes_router.get('/', response_model=List[food.Dish])
+@dishes_router.get('/', response_model=List[food.Dish], tags=['dishes'])
 async def get_all_dishes(session: AsyncSession = Depends(get_async_session)):
     """
     :param session: AsyncSession for db
@@ -20,7 +20,7 @@ async def get_all_dishes(session: AsyncSession = Depends(get_async_session)):
     return await Dish.get_all(session)
 
 
-@dishes_router.get('/{dish_id}', response_model=food.Dish)
+@dishes_router.get('/{dish_id}', response_model=food.Dish, tags=['dish'])
 async def get_dish(dish_id: int, session: AsyncSession = Depends(get_async_session)):
     """
     :param dish_id: identifier of required dish
@@ -30,7 +30,7 @@ async def get_dish(dish_id: int, session: AsyncSession = Depends(get_async_sessi
     return await Dish.get_by_id(session, dish_id)
 
 
-@dishes_router.post('/', response_model=food.Dish, status_code=201)
+@dishes_router.post('/', response_model=food.Dish, status_code=201, tags=['dish'])
 async def create_dish(request: food.DishCreate, session: AsyncSession = Depends(get_async_session)):
     """
     :param request: dish schema
@@ -45,7 +45,7 @@ async def create_dish(request: food.DishCreate, session: AsyncSession = Depends(
     return await Dish.create(session, name=request.name, ingredients=ingredients, price=request.price)
 
 
-@dishes_router.put('/{dish_id}/change_price', response_model=food.Dish)
+@dishes_router.put('/{dish_id}/change_price', response_model=food.Dish, tags=['dish'])
 async def update_price(dish_id: int, price: Decimal, session: AsyncSession = Depends(get_async_session)):
     """
     :param dish_id: id of dish change to
@@ -58,7 +58,7 @@ async def update_price(dish_id: int, price: Decimal, session: AsyncSession = Dep
     return dish
 
 
-@dishes_router.put('/{dish_id}/change_ingredients', response_model=food.Dish)
+@dishes_router.put('/{dish_id}/change_ingredients', response_model=food.Dish, tags=['dish'])
 async def update_ingredients(dish_id: int, ingredients: List[food.Ingredient],
                              session: AsyncSession = Depends(get_async_session)):
     """
@@ -73,7 +73,7 @@ async def update_ingredients(dish_id: int, ingredients: List[food.Ingredient],
     return dish
 
 
-@dishes_router.delete('/{dish_id}')
+@dishes_router.delete('/{dish_id}', tags=['dish'])
 async def delete_dish(dish_id: int, session: AsyncSession = Depends(get_async_session)):
     """
     :param dish_id: id of a dish delete to
