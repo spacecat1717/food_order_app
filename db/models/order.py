@@ -5,14 +5,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.mixins.crud_mixin import CRUDMixin
 from db.models.base import Base
+from db.models.user import User
 
 
 class Order(Base, CRUDMixin):
     __tablename__ = 'orders'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # TODO: replace to user after write auth system
-    name: Mapped[str] = mapped_column(String(50))
+    user: Mapped[int] = mapped_column(ForeignKey('users.id'))
     comment: Mapped[str] = mapped_column(String(256))
     created: Mapped[Any] = mapped_column(DateTime(timezone=True))
     closed: Mapped[Any] = mapped_column(DateTime(timezone=True))
