@@ -1,6 +1,7 @@
+import asyncio
 from typing import List, Optional
 
-from sqlalchemy import String, Column, Table, ForeignKey, Numeric
+from sqlalchemy import String, Column, Table, ForeignKey, Numeric, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.models.base import Base
@@ -23,6 +24,7 @@ class Dish(Base, CRUDMixin):
     name: Mapped[str] = mapped_column(String(50))
     ingredients: Mapped[Optional[List["Ingredient"]]] = relationship(secondary=relation_table, back_populates='dishes',
                                                                      lazy='joined')
+    tasks: Mapped[List["DishTask"]] = relationship(lazy='joined')
     price: Mapped[int] = mapped_column(Numeric, default=300)
 
 
@@ -33,3 +35,17 @@ class Ingredient(Base, CRUDMixin):
     name: Mapped[str] = mapped_column(String(50))
     dishes: Mapped[Optional[List["Dish"]]] = relationship(secondary=relation_table, back_populates='ingredients')
 
+
+class DishTask(Base, CRUDMixin):
+    __tablename__ = 'dish_tasks'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(128))
+    dish: Mapped[int] = mapped_column(ForeignKey('dishes.id'))
+    position: Mapped[int] = mapped_column(Integer)
+    time: Mapped[int] = mapped_column(Integer)
+
+    async def execute(self) -> str:
+        # временная штука для симуляции какого то действия, можно доработать
+        await asyncio.sleep(self.time)
+        return f'{self.__class__.__name__} {self.name} done!'
