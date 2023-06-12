@@ -13,7 +13,7 @@ from db.utils.enums import OrderStatusEnum, DishStatusEnum
 class Order(Base, CRUDMixin):
     __tablename__ = 'orders'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user: Mapped[int] = mapped_column(ForeignKey('users.id'))
     comment: Mapped[str] = mapped_column(String(256))
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -26,7 +26,7 @@ class Order(Base, CRUDMixin):
 class OrderItem(Base, CRUDMixin):
     __tablename__ = 'order_items'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     dish: Mapped[int] = mapped_column(ForeignKey('dishes.id'))
     quantity: Mapped[int] = mapped_column(Integer)
     total: Mapped[Decimal] = mapped_column(Numeric)

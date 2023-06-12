@@ -35,7 +35,7 @@ async def create_dish_task(request: food.DishTaskCreate, session: AsyncSession =
     :param session: AsyncSession for db
     :return: created DishTask
     """
-    return await DishTask.create(session, name=request.name, position=request.position, time=request.time)
+    return await DishTask.create(session, **request.dict())
 
 
 @dish_task_router.put('/{task_id}/change_position', response_model=food.DishTask, tags=['dish_task'])

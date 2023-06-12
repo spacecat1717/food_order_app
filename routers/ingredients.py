@@ -36,7 +36,7 @@ async def create_ingredient(request: food.IngredientCreate, session: AsyncSessio
     :param session: AsyncSession for db
     :return: new ingredient
     """
-    return await Ingredient.create(session, name=request.name)
+    return await Ingredient.create(session, **request.dict())
 
 
 @ing_router.delete('/{ing_id}', tags=['ingredient'])

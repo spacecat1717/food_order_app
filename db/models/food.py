@@ -27,7 +27,7 @@ dish_task_table = Table(
 class Dish(Base, CRUDMixin):
     __tablename__ = 'dishes'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(50))
     ingredients: Mapped[Optional[List["Ingredient"]]] = relationship(secondary=relation_table, back_populates='dishes',
                                                                      lazy='joined')
@@ -39,7 +39,7 @@ class Dish(Base, CRUDMixin):
 class Ingredient(Base, CRUDMixin):
     __tablename__ = 'ingredients'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(50))
     dishes: Mapped[Optional[List["Dish"]]] = relationship(secondary=relation_table, back_populates='ingredients')
 
@@ -47,7 +47,7 @@ class Ingredient(Base, CRUDMixin):
 class DishTask(Base, CRUDMixin):
     __tablename__ = 'dish_tasks'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(128))
     dishes: Mapped[Optional[List["Dish"]]] = relationship(secondary=dish_task_table, back_populates='tasks')
     position: Mapped[int] = mapped_column(Integer)

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from schemas import food
 from db.models.food import Dish, Ingredient, DishTask
 from db.utils.utils import get_async_session
+from routers.utils import create_nested_models_list
 
 dishes_router = APIRouter(prefix="/dishes")
 
@@ -39,12 +40,8 @@ async def create_dish(request: food.DishCreate, session: AsyncSession = Depends(
     """
     if await Dish.get_by_name(session, request.name):
         raise HTTPException(status_code=400, detail='This dish already exists!')
-    ingredients = []
-    tasks = []
-    for item in request.ingredients:
-        ingredients.append(await Ingredient.get_by_id(session, item.id))
-    for item in request.tasks:
-        tasks.append(await DishTask.get_by_id(session, item.id))
+    ingredients = await create_nested_models_list(Ingredient, request.ingredients, session)
+    tasks = await create_nested_models_list(DishTask, request.tasks, session)
     return await Dish.create(session, name=request.name, ingredients=ingredients, tasks=tasks, price=request.price)
 
 
