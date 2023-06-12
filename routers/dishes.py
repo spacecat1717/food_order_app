@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas import food
-from db.models.food import Dish, Ingredient
+from db.models.food import Dish, Ingredient, DishTask
 from db.utils.utils import get_async_session
 
 dishes_router = APIRouter(prefix="/dishes")
@@ -40,9 +40,12 @@ async def create_dish(request: food.DishCreate, session: AsyncSession = Depends(
     if await Dish.get_by_name(session, request.name):
         raise HTTPException(status_code=400, detail='This dish already exists!')
     ingredients = []
+    tasks = []
     for item in request.ingredients:
         ingredients.append(await Ingredient.get_by_id(session, item.id))
-    return await Dish.create(session, name=request.name, ingredients=ingredients, price=request.price)
+    for item in request.tasks:
+        tasks.append(await DishTask.get_by_id(session, item.id))
+    return await Dish.create(session, name=request.name, ingredients=ingredients, tasks=tasks, price=request.price)
 
 
 @dishes_router.put('/{dish_id}/change_price', response_model=food.Dish, tags=['dish'])
@@ -68,8 +71,23 @@ async def update_ingredients(dish_id: int, ingredients: List[food.Ingredient],
     :return: changed dish
     """
     dish = await Dish.get_by_id(session, dish_id)
-    new_ingredients = [await Ingredient.get_by_id(session, i.id) for i in ingredients]
+    new_ingredients = [await Ingredient.get_by_id(session, ing.id) for ing in ingredients]
     await dish.update(session, ingredients=new_ingredients)
+    return dish
+
+
+@dishes_router.put('/{dish_id}/change_tasks', response_model=food.Dish, tags=['dish'])
+async def update_dish_tasks(dish_id: int, tasks: List[food.DishTask],
+                            session: AsyncSession = Depends(get_async_session)):
+    """
+    :param dish_id: id if Dish change to
+    :param tasks: list of new tasks
+    :param session: AsyncSession for db
+    :return: changed Dish
+    """
+    dish = await Dish.get_by_id(session, dish_id)
+    new_tasks = [await DishTask.get_by_id(session, task.id) for task in tasks]
+    await dish.update(session, tasks=new_tasks)
     return dish
 
 

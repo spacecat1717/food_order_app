@@ -79,7 +79,8 @@ class Dish(BaseModel):
                         'position': 2,
                         'time': 120
                     },
-                ]
+                ],
+                'price': 500.0
             }
         }
 
@@ -87,6 +88,7 @@ class Dish(BaseModel):
 class DishCreate(BaseModel):
     name: str = Field(...)
     ingredients: Optional[List[Ingredient]]
+    tasks: Optional[List[DishTask]]
     price: Decimal = Field(default=0.0)
 
 
