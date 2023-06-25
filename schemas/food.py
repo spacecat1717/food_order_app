@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -91,6 +91,6 @@ class IngredientCreate(BaseModel):
 
 class DishCreate(BaseModel):
     name: str = Field(...)
-    ingredients: Optional[List[Union[Ingredient, IngredientCreate]]]
-    tasks: Optional[List[Union[DishTask, DishTaskCreate]]]
+    ingredients: Optional[List[Ingredient | IngredientCreate]]
+    tasks: Optional[List[DishTask | DishTaskCreate]]
     price: Decimal = Field(default=0.0)

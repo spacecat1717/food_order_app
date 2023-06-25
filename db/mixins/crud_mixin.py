@@ -2,7 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class CRUDMixin(object):
+class CRUDMixin:
+    """
+    The mixin for CRUD operations with DB models
+    """
     @classmethod
     async def create(cls, session: AsyncSession, **kwargs):
         """
@@ -20,7 +23,7 @@ class CRUDMixin(object):
     @classmethod
     async def get_by_id(cls, session: AsyncSession, identifier: int):
         """
-        Get object by its ID
+        Get model instance by its ID
         :param session: DB async session instance
         :param identifier: id of the model to get
         :return: instance of the model
@@ -30,7 +33,7 @@ class CRUDMixin(object):
     @classmethod
     async def get_by_name(cls, session: AsyncSession, name: str):
         """
-        Get model by its name
+        Get model instance by its name
         :param session: DB async session instance
         :param name: model's name(str)
         :return: instance of the model
@@ -41,7 +44,7 @@ class CRUDMixin(object):
 
     async def update(self, session: AsyncSession, **kwargs):
         """
-
+        Update operation for each model
         :param session: DB async session instance
         :param kwargs: model fields
         :return: None
@@ -52,7 +55,7 @@ class CRUDMixin(object):
 
     async def delete(self, session: AsyncSession):
         """
-
+        Delete operation for each model
         :param session: DB async session instance
         :return: None
         """
@@ -62,7 +65,7 @@ class CRUDMixin(object):
     @classmethod
     async def get_all(cls, session: AsyncSession):
         """
-
+        Get all instances of model
         :param session:  DB async session instance
         :return: queryset (all models)
         """
