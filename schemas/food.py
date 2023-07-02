@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 class Ingredient(BaseModel):
     id: int = Field(...)
     name: str = Field(...)
+    url: Optional[str]
 
     class Config:
         orm_mode = True
@@ -26,6 +27,7 @@ class DishTaskCreate(BaseModel):
 
 class DishTask(DishTaskCreate):
     id: int = Field(...)
+    url: Optional[str]
 
     class Config:
         orm_mode = True
@@ -45,6 +47,7 @@ class Dish(BaseModel):
     ingredients: Optional[List[Ingredient]]
     tasks: Optional[List[DishTask]]
     price: Decimal = Field(default=0.0)
+    url: Optional[str]
 
     class Config:
         orm_mode = True

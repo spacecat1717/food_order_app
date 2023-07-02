@@ -1,5 +1,6 @@
 from typing import List
 
+from fastapi import HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models.food import Ingredient, DishTask
@@ -24,3 +25,13 @@ async def create_nested_models_list(model: Ingredient | DishTask,
             instance = await model.create(session, **item.dict())
         models.append(instance)
     return models
+
+
+async def raise_not_found(request: Request):
+    """
+    Raises 404 exc with custom message
+    :param request: Request obj
+    :raise: HTTPException
+    """
+    msg = f"URL {request.url} doesn't exists"
+    raise HTTPException(status_code=404, detail=msg)
