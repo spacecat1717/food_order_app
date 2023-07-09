@@ -32,6 +32,7 @@ async def get_dish_nested_links(dish: Dish, request: Request):
         task.url = str(request.url_for('get_dish_task', task_id=task.id))
     return dish
 
+
 @dishes_router.get('/{dish_id}', response_model=food.Dish, tags=['dish'])
 async def get_dish(request: Request, dish_id: int, session: AsyncSession = Depends(get_async_session)):
     """
@@ -44,8 +45,7 @@ async def get_dish(request: Request, dish_id: int, session: AsyncSession = Depen
     if not dish:
         await raise_not_found(request)
         return
-    await get_dish_nested_links(dish, request)
-    return dish
+    return await get_dish_nested_links(dish, request)
 
 
 @dishes_router.post('/', response_model=food.Dish, status_code=201, tags=['dish'])

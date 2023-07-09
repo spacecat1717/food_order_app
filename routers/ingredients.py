@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas import food
 from db.models.food import Ingredient
@@ -11,11 +11,14 @@ ing_router = APIRouter(prefix='/ingredients')
 
 
 @ing_router.get('/', response_model=List[food.Ingredient], tags=['ingredients'])
-async def get_all_ingredients(session: AsyncSession = Depends(get_async_session)):
+async def get_all_ingredients(request: Request, session: AsyncSession = Depends(get_async_session)):
     """
     :param session: AsyncSession for db
     :return: List of all ingredients
     """
+    ingredients = await Ingredient.get_all(session)
+    for ing in ingredients:
+        ing.url = str(request.url_for('get_ingredient', ing_id=ing.id))
     return await Ingredient.get_all(session)
 
 

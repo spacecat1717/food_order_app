@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas import food
@@ -10,12 +10,15 @@ dish_task_router = APIRouter(prefix='/dish_tasks')
 
 
 @dish_task_router.get('/', response_model=List[food.DishTask], tags=['dish_tasks'])
-async def get_all_dish_tasks(session: AsyncSession = Depends(get_async_session)):
+async def get_all_dish_tasks(request: Request, session: AsyncSession = Depends(get_async_session)):
     """
     :param session: AsyncSession for db
     :return: List of all dish_tasks
     """
-    return await DishTask.get_all(session)
+    tasks = await DishTask.get_all(session)
+    for task in tasks:
+        task.url = str(request.url_for('get_dish_task', task_id=task.id))
+    return tasks
 
 
 @dish_task_router.get('/{task_id}', response_model=food.DishTask, tags=['dish_task'])
