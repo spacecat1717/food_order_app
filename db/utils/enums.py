@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class OrderStatusEnum(str, Enum):
+    CREATED = 'Создан'
     ACCEPTED = 'Принят'
     COOKING = 'Готовится'
     PACKING = 'Собирается'
