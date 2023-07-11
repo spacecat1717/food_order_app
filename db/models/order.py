@@ -27,6 +27,7 @@ class OrderItem(Base, CRUDMixin):
     __tablename__ = 'order_items'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    order: Mapped[int] = mapped_column(ForeignKey('orders.id'))
     dish: Mapped[int] = mapped_column(ForeignKey('dishes.id'))
     quantity: Mapped[int] = mapped_column(Integer)
     total: Mapped[Decimal] = mapped_column(Numeric)

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, EmailStr
 
 
 class User(BaseModel):
-    id: int = Field(...)
+    id: int = Field()
     username: str = Field(...)
     full_name: str = Field(default='test user')
     email: EmailStr = Field(...)

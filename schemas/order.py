@@ -4,16 +4,19 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from db.utils.enums import OrderStatusEnum
 from schemas.food import Dish
+from schemas.user import User
 
 
 class OrderItem(BaseModel):
-    id: int = Field(...)
+    id: Optional[int] = Field(primary_key=True)
     dish: Dish = Field(...)
     quantity: int = Field(default=0)
     total: Decimal = Field(default=0.0)
 
     class Config:
+        orm_mode = True
         schema_extra = {
             'example': {
                 'dish': {
@@ -36,10 +39,18 @@ class OrderItem(BaseModel):
             }
         }
 
+class OrderCreate(BaseModel):
+    comment: Optional[str] = Field(max_length=256)
+    created: datetime = Field(default_factory=datetime.now)
+    closed: datetime = Field(default=None)
+    status: str = Field(default=OrderStatusEnum.CREATED)
+    items: Optional[List[OrderItem]] = Field(default_factory=list)
+    total: Decimal = Field(default=0.0)
 
-class Order(BaseModel):
+
+class Order(OrderCreate):
     id: int = Field(...)
-    name: str = Field(...)
+    user: User = Field(...)
     comment: str = Field(max_length=256)
     created: datetime = Field(default_factory=datetime.now())
     closed: datetime = Field(default=None)
@@ -48,6 +59,7 @@ class Order(BaseModel):
     total: Decimal = Field(default=0.0)
 
     class Config:
+        orm_mode = True
         schema_extra = {
             'example': {
                 'id': 1,

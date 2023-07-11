@@ -1,4 +1,5 @@
 from typing import List
+from enum import Enum
 
 from fastapi import HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -35,3 +36,9 @@ async def raise_not_found(request: Request):
     """
     msg = f"URL {request.url} doesn't exists"
     raise HTTPException(status_code=404, detail=msg)
+
+
+class QuantityEnum(int, Enum):
+    INCREMENT = 0
+    DECREMENT = 1
+
