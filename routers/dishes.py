@@ -42,6 +42,7 @@ async def get_dish(request: Request, dish_id: int, session: AsyncSession = Depen
     :return: required dish data
     """
     dish = await Dish.get_by_id(session, dish_id)
+    dish.url = str(request.url_for('get_dish', dish_id=dish.id))
     if not dish:
         await raise_not_found(request)
         return
