@@ -8,7 +8,7 @@ from db.utils.enums import OrderStatusEnum
 from db.utils.utils import get_async_session
 from schemas import order
 from schemas import user as us
-from routers.utils import QuantityEnum, create_nested_models_list
+from routers.utils import QuantityEnum
 from routers.user import get_current_user
 
 
@@ -32,6 +32,7 @@ async def increment_quantity(item_id: int):
             item.total = item.total * item.quantity
     instance.total = sum(item.total for item in instance.items)
 
+
 # TODO: need refactor
 async def decrement_quantity(item_id: int):
     for item in instance.items:
@@ -42,6 +43,7 @@ async def decrement_quantity(item_id: int):
             else:
                 instance.items.remove(item)
     instance.total = sum(item.total for item in instance.items)
+
 
 @order_router.get('/', response_model=order.OrderCreate, tags=['order'])
 async def get_order() -> order.OrderCreate:
@@ -82,16 +84,20 @@ async def add_comment(comment: str):
     instance.comment = comment
     return {'status': 'ok', 'data': 'Comment has been changes successfully'}
 
-# FIXME: this function is not working
+
+# TODO: add url and refactor!!!
 @order_router.get('/save', response_model=order.Order, tags=['order'])
 async def save_order(user: Annotated[us.User, Depends(get_current_user)],
                      session: AsyncSession = Depends(get_async_session)):
     instance.status = OrderStatusEnum.ACCEPTED
-    order = await Order.create(session, user=user.id, comment=instance.comment, created=instance.created,
+    order = await Order.create(session, user=user, comment=instance.comment, created=instance.created,
                                closed=instance.closed, status=instance.status,
                                total=instance.total)
-    items = [await OrderItem.create(session, dish=item.dish.id, order_id=order.id,
+    await session.refresh(order)
+    items = [await OrderItem.create(session, dish_id=item.dish.id, order_id=order.id,
+                                    order=order,
                                     quantity=item.quantity, total=item.total)
                                     for item in instance.items]
-    print(order)
+    for item in items:
+        await session.refresh(item)
     return order
