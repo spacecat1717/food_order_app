@@ -4,10 +4,11 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models.order import Order, OrderItem
+from db.utils.enums import OrderStatusEnum
 from db.utils.utils import get_async_session
 from schemas import order
 from schemas import user as us
-from routers.utils import QuantityEnum
+from routers.utils import QuantityEnum, create_nested_models_list
 from routers.user import get_current_user
 
 
@@ -22,23 +23,25 @@ async def is_item_added(item: order.OrderItem) -> bool:
     else:
         return False
 
+
 # TODO: need refactor
 async def increment_quantity(item_id: int):
     for item in instance.items:
         if item.id == item_id:
             item.quantity += 1
-            item.total = item.total * 2
+            item.total = item.total * item.quantity
+    instance.total = sum(item.total for item in instance.items)
 
 # TODO: need refactor
 async def decrement_quantity(item_id: int):
     for item in instance.items:
         if item.id == item_id:
-            item.total = item.total // 2
             if item.quantity > 1:
                 item.quantity -= 1
+                item.total = item.total * item.quantity
             else:
                 instance.items.remove(item)
-
+    instance.total = sum(item.total for item in instance.items)
 
 @order_router.get('/', response_model=order.OrderCreate, tags=['order'])
 async def get_order() -> order.OrderCreate:
@@ -49,8 +52,10 @@ async def get_order() -> order.OrderCreate:
 async def add_item(item: order.OrderItem) -> dict:
     if await is_item_added(item):
         await increment_quantity(item.id)
+    item.total = item.dish.price
     item.id = len(instance.items) + 1
     instance.items.append(item)
+    instance.total = sum(item.total for item in instance.items)
     return {'status': 'ok', 'data': f'Item {item.dish.name} has been added successfully'}
 
 
@@ -69,11 +74,24 @@ async def change_quantity(item_id: int, type: int):
             await increment_quantity(item_id)
         case QuantityEnum.DECREMENT:
             await decrement_quantity(item_id)
-    return {'status': 'ok', 'data': 'Quantity of has been changed successfully'}
+    return {'status': 'ok', 'data': 'Quantity has been changed successfully'}
 
 
+@order_router.post('/comment', tags=['order'])
+async def add_comment(comment: str):
+    instance.comment = comment
+    return {'status': 'ok', 'data': 'Comment has been changes successfully'}
+
+# FIXME: this function is not working
 @order_router.get('/save', response_model=order.Order, tags=['order'])
-async def save_order(request: Request, user: Annotated[us.User, Depends(get_current_user)],
+async def save_order(user: Annotated[us.User, Depends(get_current_user)],
                      session: AsyncSession = Depends(get_async_session)):
-    order = await Order.create(session)
+    instance.status = OrderStatusEnum.ACCEPTED
+    order = await Order.create(session, user=user.id, comment=instance.comment, created=instance.created,
+                               closed=instance.closed, status=instance.status,
+                               total=instance.total)
+    items = [await OrderItem.create(session, dish=item.dish.id, order_id=order.id,
+                                    quantity=item.quantity, total=item.total)
+                                    for item in instance.items]
+    print(order)
     return order

@@ -65,7 +65,6 @@ class Order(OrderCreate):
                 'id': 1,
                 'name': 'John',
                 'comment': 'More sauce please',
-                # TODO: проверить, что datetime будет нормально работать
                 'created': '2023-05-10 22:53:47.503971',
                 'closed':  None,
                 'status': 'Готов к выдаче',

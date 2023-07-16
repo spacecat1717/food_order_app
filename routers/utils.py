@@ -5,11 +5,12 @@ from fastapi import HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models.food import Ingredient, DishTask
+from db.models.order import OrderItem
 from schemas import food
 
 
-async def create_nested_models_list(model: Ingredient | DishTask,
-                                    request_data: List[food.Ingredient | food.DishTask | food.DishTaskCreate
+async def create_nested_models_list(model: Ingredient | DishTask | OrderItem,
+                                    request_data: List[OrderItem | food.Ingredient | food.DishTask | food.DishTaskCreate
                                                        | food.IngredientCreate], session: AsyncSession):
     """
     creates list of nested models for create_dish  endpoint
@@ -41,4 +42,3 @@ async def raise_not_found(request: Request):
 class QuantityEnum(int, Enum):
     INCREMENT = 0
     DECREMENT = 1
-

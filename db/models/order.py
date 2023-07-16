@@ -15,11 +15,11 @@ class Order(Base, CRUDMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    comment: Mapped[str] = mapped_column(String(256))
+    comment: Mapped[str] = mapped_column(String(256), default='')
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    closed: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    closed: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[str] = mapped_column(String(32), default=OrderStatusEnum.ACCEPTED)
-    items: Mapped[Optional[List["OrderItem"]]] = relationship(lazy='joined')
+    items: Mapped[List["OrderItem"]] = relationship(back_populates='order', lazy='joined')
     total: Mapped[Decimal] = mapped_column(default=0.0)
 
 
@@ -27,10 +27,9 @@ class OrderItem(Base, CRUDMixin):
     __tablename__ = 'order_items'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    order: Mapped[int] = mapped_column(ForeignKey('orders.id'))
     dish: Mapped[int] = mapped_column(ForeignKey('dishes.id'))
+    order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'))
+    order: Mapped["Order"] = relationship(back_populates='order_item')
     quantity: Mapped[int] = mapped_column(Integer)
     total: Mapped[Decimal] = mapped_column(Numeric)
     status: Mapped[str] = mapped_column(String(32), default=DishStatusEnum.QUEUE)
-
-

@@ -17,7 +17,7 @@ user_router = APIRouter(prefix='/users')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
-@user_router.post('/create', response_model=schema.User, status_code=201, tags=['signup'])
+@user_router.post('/create', status_code=201, tags=['signup'])
 async def create_user(username: Annotated[str, Form()], password: Annotated[str, Form()], email: Annotated[str, Form()],
                       full_name: Annotated[str, Form()], session: AsyncSession = Depends(get_async_session)):
     """
